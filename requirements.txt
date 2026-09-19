@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pdfplumber
+python-docx
+scikit-learn
+numpy
+pydantic
+
+# Optional upgrade path (Week 6-7 in the plan): swap TF-IDF for semantic
+# embeddings. Uncomment and install once you're ready — needs ~400MB
+# model download on first run.
+# sentence-transformers==3.0.1
