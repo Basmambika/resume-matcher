@@ -17,7 +17,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.parser import parse_file, parse_document, ParsedDocument
 from app.matcher import compute_match
 from app.suggestions import generate_suggestions
-from app.models import ParsedDocumentResponse, MatchResponse, SuggestionResponse
+from app.roadmap import generate_roadmap
+from app.models import ParsedDocumentResponse, MatchResponse, SuggestionResponse, RoadmapItemResponse, JobDescriptionRequest
 
 app = FastAPI(
     title="Resume Screening & Job-Matching API",
@@ -25,9 +26,10 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# Allow the React frontend (running on a different port) to call this API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # tighten this before deploying publicly
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -92,6 +94,7 @@ async def match_resume_to_job(
     job_parsed = parse_document(job_text)
     result = compute_match(resume_parsed, job_parsed)
     suggestions = generate_suggestions(resume_parsed, job_parsed, result)
+    roadmap = generate_roadmap(result.missing_skills)
 
     return MatchResponse(
         overall_score=result.overall_score,
@@ -102,5 +105,14 @@ async def match_resume_to_job(
         suggestions=[
             SuggestionResponse(category=s.category, priority=s.priority, message=s.message)
             for s in suggestions
+        ],
+        roadmap=[
+            RoadmapItemResponse(
+                skill=r.skill,
+                resource_name=r.resource_name,
+                resource_url=r.resource_url,
+                estimated_time=r.estimated_time,
+            )
+            for r in roadmap
         ],
     )

@@ -16,6 +16,13 @@ class SuggestionResponse(BaseModel):
     message: str
 
 
+class RoadmapItemResponse(BaseModel):
+    skill: str
+    resource_name: str
+    resource_url: str
+    estimated_time: str
+
+
 class MatchResponse(BaseModel):
     overall_score: float
     text_similarity: float
@@ -23,6 +30,7 @@ class MatchResponse(BaseModel):
     matched_skills: List[str]
     missing_skills: List[str]
     suggestions: List[SuggestionResponse] = []
+    roadmap: List[RoadmapItemResponse] = []
 
 
 class JobDescriptionRequest(BaseModel):
